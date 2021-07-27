@@ -1,0 +1,38 @@
+.form {
+  margin: 0 auto;
+  padding-top: 15px;
+}
+@media only screen and (min-width: 768px) {
+  .form {
+    width: 500px;
+    padding-top: 55px;
+  }
+}
+
+.input {
+  padding: 10px;
+  margin: 10px 0;
+  width: 100%;
+  border: 0;
+  color: #8a5dee;
+  box-shadow: 0 0 15px 4px rgb(232 200 243);
+}
+
+.btnAddContact {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 10px;
+  border: none;
+  background-color: #8a5df1;
+  color: #f3bbc3;
+  font-weight: 700;
+  font-size: 20px;
+  border-radius: 5px;
+  width: 100%;
+}
+.labelForm {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #8a5dee;
+}

@@ -1,0 +1,15 @@
+.list {
+  padding: 15px;
+  margin: 10px auto;
+  box-shadow: 0 0 15px 4px rgb(232 200 243);
+}
+@media only screen and (min-width: 768px) {
+  .list {
+    width: 500px;
+  }
+}
+p {
+  text-align: center;
+  margin: 15px 0 15px;
+  font-size: 16px;
+}
