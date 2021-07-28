@@ -1,91 +1,90 @@
-import React, { Component } from 'react';
+
+import React, { useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from './ContactForm.module.css';
-import { connect } from 'react-redux';
 import formOperations from '../../redux/form/form-operations';
+import contactsSelectors from '../../redux/form/contacts-selectors';
 
-class ContactForm extends Component {
-  state = {
-    name: '',
-    number: '',
-  };
 
-  handelChange = event => {
-    const { name, value } = event.currentTarget;
+export default function ContactForm() {
+  const dispatch = useDispatch();
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
 
-    this.setState({
-      [name]: value,
-    });
-  };
+  const contacts = useSelector(contactsSelectors.getAllContacts);
 
-  handelSubmit = event => {
-    event.preventDefault();
 
-    const { name } = this.state;
-    const arrNames = this.props.contacts.map(contact => contact.name);
+  const handeleChange = event => {
+    const { name, value } = event.target;
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
 
-    arrNames.includes(name)
-      ? alert(`${name} is already in contacts`)
-      : this.props.onSubmit(this.state);
-    this.resetForm();
-  };
+      case 'number':
+        setNumber(value);
+        break;
 
-  resetForm = () => {
-    this.setState({
-      name: '',
-      number: '',
-    });
-  };
-
-  render() {
-    const { name, number } = this.state;
-    return (
-      <>
-        <form className={styles.form} onSubmit={this.handelSubmit}>
-          <label className={styles.labelForm}>
-            Name{' '}
-            <input
-              className={styles.input}
-              type="text"
-              name="name"
-              value={name}
-              onChange={this.handelChange}
-              pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-              title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
-              required
-            />
-          </label>
-          <label className={styles.labelForm}>
-            Number{' '}
-            <input
-              className={styles.input}
-              type="tel"
-              name="number"
-              value={number}
-              onChange={this.handelChange}
-              pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-              title="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
-              required
-            />
-          </label>
-          <button className={styles.btnAddContact} type="submit">
-            Add contact
-          </button>
-        </form>
-      </>
-    );
+      default:
+        console.log(`Not found case ${name}`)
+    }
   }
+
+  const resetForm = () => {
+    setName('');
+    setNumber('');
+
+  };
+
+  const handleSubmit = useCallback(
+    event => {
+      event.preventDefault();
+      const arrNames = contacts.map(contact => contact.name);
+
+      arrNames.includes(name)
+        ? alert(`${name} is already in contacts`)
+        : dispatch(formOperations.addContact({ name, number }));
+      resetForm();
+
+
+    },
+    [dispatch, contacts, name, number]
+  );
+
+  return (
+    <>
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <label className={styles.labelForm}>
+          Name{' '}
+          <input
+            className={styles.input}
+            type="text"
+            name="name"
+            value={name}
+            onChange={handeleChange}
+            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+            title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
+            required
+          />
+        </label>
+        <label className={styles.labelForm}>
+          Number{' '}
+          <input
+            className={styles.input}
+            type="tel"
+            name="number"
+            value={number}
+            onChange={handeleChange}
+            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+            title="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
+            required
+          />
+        </label>
+        <button className={styles.btnAddContact} type="submit">
+          Add contact
+        </button>
+      </form>
+    </>
+  )
 }
 
-const mapStateToProps = state => {
-  return {
-    contacts: state.contacts.items,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    onSubmit: value => dispatch(formOperations.addContact(value)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);

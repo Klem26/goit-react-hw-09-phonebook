@@ -1,12 +1,23 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from './Filter.module.css';
-import { connect } from 'react-redux';
+
 
 import * as formActions from '../../redux/form/form-actions';
 import contactsSelectors from '../../redux/form/contacts-selectors';
 
-const Filter = ({ value, onChange }) => {
+
+export default function Filter() {
+  const value = useSelector(contactsSelectors.getFilter);
+  const dispatch = useDispatch();
+
+  const onChange = useCallback(
+    e => {
+      const value = e.target.value
+      dispatch(formActions.filterContacts(value))
+    },
+    [dispatch]
+  );
   return (
     <div className={styles.filter}>
       <label className={styles.labelForm}>
@@ -20,19 +31,4 @@ const Filter = ({ value, onChange }) => {
       </label>
     </div>
   );
-};
-
-const mapStateToProps = state => ({
-  value: contactsSelectors.getFilter(state),
-});
-
-const mapDispatchToProps = dispatch => ({
-  onChange: e => dispatch(formActions.filterContacts(e.target.value)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Filter);
-
-Filter.propTypes = {
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
 };
